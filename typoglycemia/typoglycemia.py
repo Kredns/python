@@ -3,16 +3,20 @@
 import random
 
 if __name__ == '__main__':
-	sample = 'This is some sample text that will be randomized, but still entierly readable.'
-	# Get sample from a file called sample.txt
+	filename = 'sample.txt'
 	output = ''
 
-	for word in sample.split(' '):
-		if len(word) > 2:
-			first, *middle, last = word
-			random.shuffle(middle)
-			word = first + ''.join(middle) + last
-			output += word + ' '
+	with open(filename) as f:
+		for line in f:
+			for word in line.split():
+				if len(word) > 2:
+					first, *middle, last = word
+					random.shuffle(middle)
+					word = first + ''.join(middle) + last
+					output += word + ' '
+				else:
+					output += word + ' '
+		f.seek(0) # Return to the beginning of the file.
+		print(f.read())
 	
-	print(sample)
 	print(output)
