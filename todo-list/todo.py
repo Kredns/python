@@ -19,7 +19,7 @@ class ToDo():
 		if item in self.items:
 			self.items.remove(item)
 	
-	def print(self):
+	def list(self):
 		print("To Do List for {0}".format(self.date))
 		print(self.items)
 
@@ -28,6 +28,6 @@ if __name__ == '__main__':
 	today.addItem('Take a shower.')
 	today.addItem('Go to work.')
 	today.addItem('') # Try to add a blank item.
-	today.print()
+	today.list()
 	today.removeItem('Go to work.')
-	today.print()
+	today.list()
