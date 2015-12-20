@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# My solution to the following challenge: https://redd.it/3s4nyq
+
 import random
 
 if __name__ == '__main__':
