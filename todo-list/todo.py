@@ -27,7 +27,8 @@ if __name__ == '__main__':
 	today = ToDo()
 	today.addItem('Take a shower.')
 	today.addItem('Go to work.')
-	today.addItem('') # Try to add a blank item.
+	# Try to add a blank item. This should fail.
+	today.addItem('')
 	today.list()
 	today.removeItem('Go to work.')
 	today.list()
