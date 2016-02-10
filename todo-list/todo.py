@@ -26,4 +26,15 @@ class ToDo():
 			print(self.items)
 
 if __name__ == '__main__':
+<<<<<<< HEAD
 	pass	
+=======
+	today = ToDo()
+	today.addItem('Take a shower.')
+	today.addItem('Go to work.')
+	# Try to add a blank item. This should fail.
+	today.addItem('')
+	today.list()
+	today.removeItem('Go to work.')
+	today.list()
+>>>>>>> 7b53b0e186a7a1899ed5b19c2a4a5ac75be4a50b
