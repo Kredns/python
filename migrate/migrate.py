@@ -12,10 +12,13 @@
 # filename are illegal: \ / ? : * " > < |
 # Also worth noting is that folders have a max length of 247 characters + <null>.
 
+import os
+import shutil
+
 def initialCleanup():
 	# This function will need to delete .macromedia because it's not needed and 
 	# usually contains file paths longer than 260 characters. 
-	pass
+	shutil.rmtree('~/.macromedia', ignore_errors=True)
 
 if __name__ == '__main__':
 	pass
