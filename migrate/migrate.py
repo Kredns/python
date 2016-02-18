@@ -11,3 +11,11 @@
 # Windows limits a single path to 260 characters. The following characters in a
 # filename are illegal: \ / ? : * " > < |
 # Also worth noting is that folders have a max length of 247 characters + <null>.
+
+def initialCleanup():
+	# This function will need to delete .macromedia because it's not needed and 
+	# usually contains file paths longer than 260 characters. 
+	pass
+
+if __name__ == '__main__':
+	pass
