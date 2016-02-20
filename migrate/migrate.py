@@ -16,9 +16,10 @@ import os
 import shutil
 
 def initialCleanup():
-	# This function will need to delete .macromedia because it's not needed and 
+	# The first thing we need to do is delete .macromedia as it is not needed and
 	# usually contains file paths longer than 260 characters. 
-	shutil.rmtree('~/.macromedia', ignore_errors=True)
+	home = os.path.expanduser('~')
+	shutil.rmtree(home + '/.macromedia', ignore_errors=True)
 
 if __name__ == '__main__':
-	pass
+	initialCleanup()	
