@@ -21,5 +21,7 @@ def initialCleanup():
 	home = os.path.expanduser('~')
 	shutil.rmtree(home + '/.macromedia', ignore_errors=True)
 
+	# Next we are going to find any files that have conflicts in their filenames.
+
 if __name__ == '__main__':
 	initialCleanup()	
