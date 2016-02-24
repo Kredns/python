@@ -29,6 +29,9 @@ def initial_cleanup():
 				print name
 
 			new_name = ''.join(c for c in name if c in valid_chars)
+			if os.path.exists(new_name):
+				print 'Filename is already being used. Adding a 1'
+				new_name += '1'
 			os.rename(name, new_name)
 
 if __name__ == '__main__':
