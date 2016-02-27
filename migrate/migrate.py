@@ -13,6 +13,7 @@
 # Also worth noting is that folders have a max length of 247 characters + <null>.
 
 import os
+import sys
 import shutil
 
 def initial_cleanup():
@@ -20,7 +21,9 @@ def initial_cleanup():
 	# usually contains file paths longer than 260 characters.
 	home = os.path.expanduser('~')
 	shutil.rmtree(home + '/.macromedia', ignore_errors=True)
+	shutil.rmtree(home + '/.cache/mozilla/firefox', ignore_errors=True)
 
+def fix_filenames():
 	valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 	for root, dirs, files in os.walk(home + '/python/migrate/test_data'):
@@ -57,4 +60,5 @@ def initial_cleanup():
 				print e
 
 if __name__ == '__main__':
-	initial_cleanup()
+	print "You should not be running this on your machine. It will delete your firefox cache."
+	sys.exit(0)
