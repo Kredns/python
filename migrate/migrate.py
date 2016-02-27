@@ -23,16 +23,38 @@ def initial_cleanup():
 
 	valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-	for root, dirs, files in os.walk(home + '/python/migrate/'):
+	for root, dirs, files in os.walk(home + '/python/migrate/test_data'):
+		dup_count = 0
+		path = root + '/'
 		for name in files:
 			if len(name) > 255:
+				# TODO: Truncate filename.
 				print name
 
-			new_name = ''.join(c for c in name if c in valid_chars)
-			if os.path.exists(new_name):
-				print 'Filename is already being used. Adding a 1'
-				new_name += '1'
-			os.rename(name, new_name)
+			# Create a copy of the filename to work with. Next we grab the file extension
+			# for use later on. Then we remove any invalid characters.
+			new_name = name
+			ext = os.path.splitext(os.path.basename(path + new_name))[1]
+			new_name = ''.join(c for c in new_name if c in valid_chars)
+
+			# It's possible that the new name we have given the file could already be in
+			# in use by another file that we have previously renamed. Consider the following:
+			# bob::.txt and bob:.txt are files in a directory. When we rename the first file
+			# it would be renamed to bob.txt, the next file would also be renamed to bob.txt
+			# overwriting the data. To avoid loss of data we will check for this scenario and
+			# if it occurs we add a 1 to the filename before the extension.
+			if os.path.isfile(path + name) and name != new_name:
+				new_name = os.path.splitext(os.path.basename(path + new_name))[0]
+				new_name += str(dup_count)
+				dup_count += 1
+				new_name += ext
+				print new_name
+
+			try:
+				os.rename(path + name, path + new_name)
+			except OSError as e:
+				print 'Unable to rename file %s.' % name
+				print e
 
 if __name__ == '__main__':
 	initial_cleanup()
