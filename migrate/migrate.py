@@ -16,17 +16,18 @@ import os
 import sys
 import shutil
 
+HOME = os.path.expanduser('~')
+
 def initial_cleanup():
 	# The first thing we need to do is delete .macromedia as it is not needed and
 	# usually contains file paths longer than 260 characters.
-	home = os.path.expanduser('~')
-	shutil.rmtree(home + '/.macromedia', ignore_errors=True)
-	shutil.rmtree(home + '/.cache/mozilla/firefox', ignore_errors=True)
+	shutil.rmtree(HOME + '/.macromedia', ignore_errors=True)
+	shutil.rmtree(HOME + '/.cache/mozilla/firefox', ignore_errors=True)
 
 def fix_filenames():
 	valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-	for root, dirs, files in os.walk(home + '/python/migrate/test_data'):
+	for root, dirs, files in os.walk(HOME + '/python/migrate/test_data'):
 		dup_count = 0
 		path = root + '/'
 		for name in files:
