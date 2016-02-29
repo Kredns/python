@@ -15,6 +15,8 @@ def initial_cleanup():
 def fix_filenames():
 	valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
+	# After I'm finished testing this os.walk will just be called on /home.
+	# For now however I'm just calling it on test data.
 	for root, dirs, files in os.walk(HOME + '/python/migrate/test_data'):
 		dup_count = 0
 		path = root + '/'
