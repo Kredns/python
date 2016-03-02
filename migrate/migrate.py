@@ -5,6 +5,7 @@ import sys
 import shutil
 
 HOME = os.path.expanduser('~')
+#HOME = '/home' # TODO: Make sure to ignore the lost+found directory.
 
 def initial_cleanup():
 	# The first thing we need to do is delete .macromedia as it is not needed and
@@ -51,5 +52,6 @@ def fix_filenames():
 				print e
 
 if __name__ == '__main__':
-	print "You should not be running this on your machine. It will delete your firefox cache."
+	print "You should not be running this on your machine. It will delete ",
+	print "several files and rename others."
 	sys.exit(0)
