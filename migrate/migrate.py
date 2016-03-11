@@ -40,7 +40,7 @@ def fix_filenames():
                 new_name += str(dup_count)
                 dup_count += 1
                 new_name += ext
-                print('Renaming {old} to {new}'.format(old=name, new=new_name))
+                print('Renaming {old} -> {new}'.format(old=name, new=new_name))
 
             try:
                 os.rename(path + name, path + new_name)
