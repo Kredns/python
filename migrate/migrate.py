@@ -38,7 +38,6 @@ def fix_filenames(preview=False):
                     dup_count += 1
                 new_name = os.path.splitext(os.path.basename(path + new_name))[0]
                 new_name += str(dup_count)
-                dup_count += 1
                 new_name += ext
                 print('Renaming {old} -> {new}'.format(old=name, new=new_name))
 
