@@ -31,7 +31,7 @@ class WindowsMigrate:
 
         return new_name
 
-    def fix_filenames(self, preview=False):
+    def fix_filenames(self):
         valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
         # After I'm finished testing this os.walk will just be called on /home.
@@ -53,8 +53,7 @@ class WindowsMigrate:
                     if name != (new_name + ext):
                         print('Renaming {old} -> {new}{ext}'.format(old=name, new=new_name, ext=ext))
                         self.check_dupes(new_name, ext)
-                        if preview is False:
-                            os.rename(self.path + name, self.path + new_name + ext)
+                        os.rename(self.path + name, self.path + new_name + ext)
                 except OSError as e:
                     print('Unable to rename file {0}.'.format(name))
                     print(e)
@@ -62,15 +61,10 @@ class WindowsMigrate:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Prep files to be moved to Windows from *nix.')
     parser.add_argument('--debug', '-d', action='store_true', help='debug mode is used for testing this script')
-    parser.add_argument('--preview', '-p', action='store_true', help='show what files will be renamed, but does NOT rename them.')
     args = parser.parse_args()
 
     migration = WindowsMigrate()
-
-    if args.preview:
-        migration.fix_filenames(preview=True)
-        sys.exit(0)
-
+    
     if args.debug:
         migration.fix_filenames()
         sys.exit(0)
