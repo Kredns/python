@@ -14,7 +14,7 @@ def initial_cleanup():
     shutil.rmtree(HOME + '/.macromedia', ignore_errors=True)
     shutil.rmtree(HOME + '/.cache/mozilla/firefox', ignore_errors=True)
 
-def fix_filenames():
+def fix_filenames(preview=False):
     valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
     # After I'm finished testing this os.walk will just be called on /home.
@@ -43,7 +43,8 @@ def fix_filenames():
                 print('Renaming {old} -> {new}'.format(old=name, new=new_name))
 
             try:
-                os.rename(path + name, path + new_name)
+                if preview is False:
+                    os.rename(path + name, path + new_name)
             except OSError as e:
                 print('Unable to rename file {0}.'.format(name))
                 print(e)
@@ -51,11 +52,16 @@ def fix_filenames():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Prep files to be moved to Windows from *nix.')
     parser.add_argument('--debug', action='store_true', help='debug mode is used for testing this script')
+    parser.add_argument('--preview', '-p', action='store_true', help='show what files will be renamed, but does NOT rename them.')
     args = parser.parse_args()
+    
+    if args.preview:
+        fix_filenames(preview=True)
+        sys.exit(0)
 
     if args.debug:
         fix_filenames()
         sys.exit(0)
-    else:
-        print("You should not be running this on your machine. It will delete", end=' ')
-        print("several files and rename others.")
+
+    print("You should not be running this on your machine. It will delete", end=' ')
+    print("several files and rename others.")
