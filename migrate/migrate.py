@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -24,7 +24,7 @@ def fix_filenames():
         for name in files:
             if len(name) > 255:
                 # TODO: Truncate filename.
-                print name
+                print(name)
 
             # Create a copy of the filename to work with. Next we grab the file extension
             # for use later on. Then we remove any invalid characters.
@@ -43,13 +43,13 @@ def fix_filenames():
                 new_name += str(dup_count)
                 dup_count += 1
                 new_name += ext
-                print new_name
+                print(new_name)
 
             try:
                 os.rename(path + name, path + new_name)
             except OSError as e:
-                print 'Unable to rename file %s.' % name
-                print e
+                print('Unable to rename file %s.' % name)
+                print(e)
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
@@ -57,6 +57,6 @@ if __name__ == '__main__':
             fix_filenames()
             sys.exit(0)
 
-    print "You should not be running this on your machine. It will delete",
-    print "several files and rename others."
+    print("You should not be running this on your machine. It will delete", end=' ')
+    print("several files and rename others.")
     sys.exit(0)
