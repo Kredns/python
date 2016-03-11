@@ -24,7 +24,6 @@ class WindowsMigrate:
             dup_count += 1
             new_name += str(dup_count)
 
-
     def fix_filenames(self, preview=False):
         valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
