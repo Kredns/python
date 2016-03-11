@@ -53,7 +53,7 @@ if __name__ == '__main__':
     parser.add_argument('--debug', action='store_true', help='debug mode is used for testing this script')
     parser.add_argument('--preview', '-p', action='store_true', help='show what files will be renamed, but does NOT rename them.')
     args = parser.parse_args()
-    
+
     if args.preview:
         fix_filenames(preview=True)
         sys.exit(0)
