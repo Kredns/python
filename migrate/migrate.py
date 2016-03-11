@@ -9,6 +9,7 @@ import argparse
 class WindowsMigrate:
     HOME = os.path.expanduser('~')
     path = ''
+    dup_count = 0
 
     def __init__(self):
         pass
@@ -21,8 +22,8 @@ class WindowsMigrate:
 
     def check_dupes(self, name, new_name, ext):
         if os.path.isfile(self.path + new_name + ext) and name != (new_name + ext):
-            dup_count += 1
-            new_name += str(dup_count)
+            self.dup_count += 1
+            new_name += str(self.dup_count)
 
     def fix_filenames(self, preview=False):
         valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -30,7 +31,7 @@ class WindowsMigrate:
         # After I'm finished testing this os.walk will just be called on /home.
         # For now however I'm just calling it on test data.
         for root, dirs, files in os.walk(self.HOME + '/python/migrate/test_data'):
-            dup_count = 0
+            self.dup_count = 0
             self.path = root + '/'
             for name in files:
                 if len(name) > 255:
@@ -50,7 +51,7 @@ class WindowsMigrate:
                         print('Renaming {old} -> {new}{ext}'.format(old=name, new=new_name, ext=ext))
                         self.check_dupes(name, new_name, ext)
                         if preview is False:
-                            os.rename(path + name, path + new_name + ext)
+                            os.rename(self.path + name, self.path + new_name + ext)
                 except OSError as e:
                     print('Unable to rename file {0}.'.format(name))
                     print(e)
