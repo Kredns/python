@@ -21,7 +21,10 @@ class WindowsMigrate:
         shutil.rmtree(self.HOME + '/.cache/mozilla/firefox', ignore_errors=True)
 
     def check_dupes(self, name, new_name, ext):
-        if os.path.isfile(self.path + new_name + ext) and name != (new_name + ext):
+        print(name)
+        print(new_name + ext)
+
+        if os.path.isfile(self.path + new_name + ext):
             self.dup_count += 1
             new_name += str(self.dup_count)
 
