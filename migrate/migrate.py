@@ -23,6 +23,7 @@ class WindowsMigrate:
         dup_count = 0
         if os.path.isfile(self.path + new_name + ext):
             while os.path.isfile(self.path + new_name + ext):
+                # This removes the dup_count from the filename so that the count is incremental.
                 if dup_count > 0:
                     new_name = new_name[:-1]
 
