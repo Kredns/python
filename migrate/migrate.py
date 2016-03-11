@@ -3,6 +3,7 @@
 import os
 import sys
 import shutil
+import argparse
 
 HOME = os.path.expanduser('~')
 #HOME = '/home' # TODO: Make sure to ignore the lost+found directory.
@@ -48,15 +49,17 @@ def fix_filenames():
             try:
                 os.rename(path + name, path + new_name)
             except OSError as e:
-                print('Unable to rename file %s.' % name)
+                print('Unable to rename file {0}.'.format(name))
                 print(e)
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        if sys.argv[1] == '--debug':
-            fix_filenames()
-            sys.exit(0)
+    parser = argparse.ArgumentParser(description='Prep files to be moved to Windows from *nix.')
+    parser.add_argument('--debug', action='store_true', help='debug mode is used for testing this script')
+    args = parser.parse_args()
 
-    print("You should not be running this on your machine. It will delete", end=' ')
-    print("several files and rename others.")
-    sys.exit(0)
+    if args.debug:
+        fix_filenames()
+        sys.exit(0)
+    else:
+        print("You should not be running this on your machine. It will delete", end=' ')
+        print("several files and rename others.")
