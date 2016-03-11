@@ -25,25 +25,23 @@ def fix_filenames(preview=False):
         for name in files:
             if len(name) > 255:
                 # TODO: Truncate filename.
-                print(name)
+                print('File {0} needs to be shortened.'.format(name))
 
             # Create a copy of the filename to work with. Next we grab the file extension
             # for use later on. Then we remove any invalid characters.
-            new_name = name
-            ext = os.path.splitext(os.path.basename(path + new_name))[1]
+            new_name, ext = os.path.splitext(name)
             new_name = ''.join(c for c in new_name if c in valid_chars)
+            ext = ''.join(c for c in ext if c in valid_chars)
 
-            if os.path.isfile(path + name) and name != new_name:
-                if os.path.exists(path + name):
-                    dup_count += 1
-                new_name = os.path.splitext(os.path.basename(path + new_name))[0]
+            if os.path.isfile(path + new_name + ext) and name != (new_name + ext):
+                dup_count += 1
                 new_name += str(dup_count)
-                new_name += ext
-                print('Renaming {old} -> {new}'.format(old=name, new=new_name))
 
             try:
-                if preview is False:
-                    os.rename(path + name, path + new_name)
+                if name != (new_name + ext):
+                    print('Renaming {old} -> {new}{ext}'.format(old=name, new=new_name, ext=ext))
+                    if preview is False:
+                        os.rename(path + name, path + new_name + ext)
             except OSError as e:
                 print('Unable to rename file {0}.'.format(name))
                 print(e)
