@@ -9,7 +9,6 @@ import argparse
 class WindowsMigrate:
     HOME = os.path.expanduser('~')
     path = ''
-    dup_count = 0
 
     def __init__(self):
         pass
@@ -20,11 +19,17 @@ class WindowsMigrate:
         shutil.rmtree(self.HOME + '/.macromedia', ignore_errors=True)
         shutil.rmtree(self.HOME + '/.cache/mozilla/firefox', ignore_errors=True)
 
-    def check_dupes(self, name, new_name, ext):
+    def check_dupes(self, new_name, ext):
+        dup_count = 0
         if os.path.isfile(self.path + new_name + ext):
             while os.path.isfile(self.path + new_name + ext):
-                self.dup_count += 1
-                new_name += str(self.dup_count)
+                if dup_count > 0:
+                    new_name = new_name[:-1]
+
+                dup_count += 1
+                new_name += str(dup_count)
+
+        return new_name
 
     def fix_filenames(self, preview=False):
         valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -32,7 +37,6 @@ class WindowsMigrate:
         # After I'm finished testing this os.walk will just be called on /home.
         # For now however I'm just calling it on test data.
         for root, dirs, files in os.walk(self.HOME + '/python/migrate/test_data'):
-            self.dup_count = 0
             self.path = root + '/'
             for name in files:
                 if len(name) > 255:
@@ -48,7 +52,7 @@ class WindowsMigrate:
                 try:
                     if name != (new_name + ext):
                         print('Renaming {old} -> {new}{ext}'.format(old=name, new=new_name, ext=ext))
-                        self.check_dupes(name, new_name, ext)
+                        self.check_dupes(new_name, ext)
                         if preview is False:
                             os.rename(self.path + name, self.path + new_name + ext)
                 except OSError as e:
