@@ -45,8 +45,6 @@ class WindowsMigrate:
                 new_name = ''.join(c for c in new_name if c in valid_chars)
                 ext = ''.join(c for c in ext if c in valid_chars)
 
-                self.check_dupes(name, new_name, ext)
-
                 try:
                     if name != (new_name + ext):
                         print('Renaming {old} -> {new}{ext}'.format(old=name, new=new_name, ext=ext))
