@@ -7,11 +7,9 @@ import argparse
 
 
 class WindowsMigrate:
-    HOME = os.path.expanduser('~')
-    path = ''
-
     def __init__(self):
-        pass
+        self.HOME = os.path.expanduser('~')
+        self.path = ''
 
     def initial_cleanup(self):
         # The first thing we need to do is delete .macromedia as it is not needed and
@@ -65,7 +63,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     migration = WindowsMigrate()
-    
+
     if args.debug:
         migration.fix_filenames()
         sys.exit(0)
