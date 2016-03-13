@@ -18,10 +18,10 @@ class WindowsMigrate:
         shutil.rmtree(self.HOME + '/.macromedia', ignore_errors=True)
         shutil.rmtree(self.HOME + '/.cache/mozilla/firefox', ignore_errors=True)
 
-    def check_dupes(self, new_name, ext):
+    def check_dupes(self, new_name, ext=''):
         dup_count = 0
-        if os.path.isfile(self.path + new_name + ext):
-            while os.path.isfile(self.path + new_name + ext):
+        if os.path.exists(self.path + new_name + ext):
+            while os.path.exists(self.path + new_name + ext):
                 # This removes the dup_count from the filename so that the count is incremental.
                 if dup_count > 0:
                     new_name = new_name[:-1]
@@ -31,11 +31,15 @@ class WindowsMigrate:
 
         return new_name
 
+    def trim_invalid_chars(self, string):
+        return ''.join(c for c in string if c in self.valid_chars)
+
     def fix_filenames(self):
         # After I'm finished testing this os.walk will just be called on /home.
         # For now however I'm just calling it on test data.
         for root, dirs, files in os.walk(self.HOME + '/python/migrate/test_data'):
             self.path = root + '/'
+            
             for name in files:
                 if len(name) > 255:
                     # TODO: Truncate filename.
@@ -44,16 +48,30 @@ class WindowsMigrate:
                 # Create a copy of the filename to work with. Next we grab the file extension
                 # for use later on. Then we remove any invalid characters.
                 new_name, ext = os.path.splitext(name)
-                new_name = ''.join(c for c in new_name if c in self.valid_chars)
-                ext = ''.join(c for c in ext if c in self.valid_chars)
+                new_name = self.trim_invalid_chars(new_name)
+                ext = self.trim_invalid_chars(ext)
 
                 try:
                     if name != (new_name + ext):
-                        print('Renaming {old} -> {new}{ext}'.format(old=name, new=new_name, ext=ext))
-                        self.check_dupes(new_name, ext)
+                        print('Renaming file {old} to {new}{ext}.'.format(old=name, new=new_name, ext=ext))
+                        new_name = self.check_dupes(new_name, ext)
                         os.rename(self.path + name, self.path + new_name + ext)
                 except OSError as e:
                     print('Unable to rename file {0}.'.format(name))
+                    print(e)
+
+        for root, dirs, files in os.walk(self.HOME + '/python/migrate/test_data'):
+            self.path = root + '/'
+
+            for directory in dirs:
+                new_dir = self.trim_invalid_chars(directory)
+                try:
+                    if new_dir != directory:
+                        print('Renaming directory {0} to {1}'.format(directory, new_dir))
+                        new_dir = self.check_dupes(new_dir)
+                        os.rename(self.path + directory, self.path + new_dir)
+                except OSError as e:
+                    print('Unable to rename directory {0}.'.format(directory))
                     print(e)
 
 if __name__ == '__main__':
