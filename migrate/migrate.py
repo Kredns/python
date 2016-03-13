@@ -18,7 +18,7 @@ class WindowsMigrate:
         shutil.rmtree(self.HOME + '/.macromedia', ignore_errors=True)
         shutil.rmtree(self.HOME + '/.cache/mozilla/firefox', ignore_errors=True)
 
-    def check_dupes(self, new_name, ext=None):
+    def check_dupes(self, new_name, ext=''):
         dup_count = 0
         if os.path.exists(self.path + new_name + ext):
             while os.path.exists(self.path + new_name + ext):
