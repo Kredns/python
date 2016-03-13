@@ -60,6 +60,9 @@ class WindowsMigrate:
                     print('Unable to rename file {0}.'.format(name))
                     print(e)
 
+        for root, dirs, files in os.walk(self.HOME + '/python/migrate/test_data'):
+            self.path = root + '/'
+
             for directory in dirs:
                 new_dir = self.trim_invalid_chars(directory)
                 print('Old -> {0} New -> {1}'.format(directory, new_dir))
