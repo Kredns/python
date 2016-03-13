@@ -10,7 +10,7 @@ class WindowsMigrate:
     def __init__(self):
         self.HOME = os.path.expanduser('~')
         self.path = ''
-        self.valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        self.valid_chars = "-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
     def initial_cleanup(self):
         # The first thing we need to do is delete .macromedia as it is not needed and
