@@ -65,7 +65,6 @@ class WindowsMigrate:
 
             for directory in dirs:
                 new_dir = self.trim_invalid_chars(directory)
-                print('Old -> {0} New -> {1}'.format(directory, new_dir))
                 try:
                     if new_dir != directory:
                         print('Renaming directory {0} to {1}'.format(directory, new_dir))
