@@ -10,6 +10,7 @@ class WindowsMigrate:
     def __init__(self):
         self.HOME = os.path.expanduser('~')
         self.path = ''
+        self.valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
     def initial_cleanup(self):
         # The first thing we need to do is delete .macromedia as it is not needed and
@@ -31,8 +32,6 @@ class WindowsMigrate:
         return new_name
 
     def fix_filenames(self):
-        valid_chars="-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
         # After I'm finished testing this os.walk will just be called on /home.
         # For now however I'm just calling it on test data.
         for root, dirs, files in os.walk(self.HOME + '/python/migrate/test_data'):
@@ -45,8 +44,8 @@ class WindowsMigrate:
                 # Create a copy of the filename to work with. Next we grab the file extension
                 # for use later on. Then we remove any invalid characters.
                 new_name, ext = os.path.splitext(name)
-                new_name = ''.join(c for c in new_name if c in valid_chars)
-                ext = ''.join(c for c in ext if c in valid_chars)
+                new_name = ''.join(c for c in new_name if c in self.valid_chars)
+                ext = ''.join(c for c in ext if c in self.valid_chars)
 
                 try:
                     if name != (new_name + ext):
