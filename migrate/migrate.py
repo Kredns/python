@@ -40,7 +40,7 @@ class WindowsMigrate:
         for root, dirs, files in os.walk(self.HOME + '/python/migrate/test_data'):
             self.path = root + '/'
             for directory in dirs:
-                new_dir = trim_invalid_chars(directory)
+                new_dir = self.trim_invalid_chars(directory)
                 print('Old -> {0} New -> {1}'.format(directory, new_dir))
                 try:
                     if new_dir != directory:
@@ -59,8 +59,8 @@ class WindowsMigrate:
                 # Create a copy of the filename to work with. Next we grab the file extension
                 # for use later on. Then we remove any invalid characters.
                 new_name, ext = os.path.splitext(name)
-                new_name = trim_invalid_chars(new_name)
-                ext = trim_invalid_chars(ext)
+                new_name = self.trim_invalid_chars(new_name)
+                ext = self.trim_invalid_chars(ext)
 
                 try:
                     if name != (new_name + ext):
