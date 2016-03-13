@@ -39,18 +39,7 @@ class WindowsMigrate:
         # For now however I'm just calling it on test data.
         for root, dirs, files in os.walk(self.HOME + '/python/migrate/test_data'):
             self.path = root + '/'
-            for directory in dirs:
-                new_dir = self.trim_invalid_chars(directory)
-                print('Old -> {0} New -> {1}'.format(directory, new_dir))
-                try:
-                    if new_dir != directory:
-                        print('Renaming directory {0} to {1}'.format(directory, new_dir))
-                        new_dir = self.check_dupes(new_dir)
-                        os.rename(self.path + directory, self.path + new_dir)
-                except OSError as e:
-                    print('Unable to rename directory {0}.'.format(directory))
-                    print(e)
-
+            
             for name in files:
                 if len(name) > 255:
                     # TODO: Truncate filename.
@@ -69,6 +58,18 @@ class WindowsMigrate:
                         os.rename(self.path + name, self.path + new_name + ext)
                 except OSError as e:
                     print('Unable to rename file {0}.'.format(name))
+                    print(e)
+
+            for directory in dirs:
+                new_dir = self.trim_invalid_chars(directory)
+                print('Old -> {0} New -> {1}'.format(directory, new_dir))
+                try:
+                    if new_dir != directory:
+                        print('Renaming directory {0} to {1}'.format(directory, new_dir))
+                        new_dir = self.check_dupes(new_dir)
+                        os.rename(self.path + directory, self.path + new_dir)
+                except OSError as e:
+                    print('Unable to rename directory {0}.'.format(directory))
                     print(e)
 
 if __name__ == '__main__':
