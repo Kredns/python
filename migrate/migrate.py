@@ -30,7 +30,7 @@ class WindowsMigrate:
                 new_name += str(dup_count)
 
         return new_name
-    
+
     def trim_invalid_chars(self, string):
         return ''.join(c for c in string if c in self.valid_chars)
 
@@ -47,6 +47,9 @@ class WindowsMigrate:
                         print('Renaming directory {0} to {1}'.format(directory, new_dir))
                         new_dir = self.check_dupes(new_dir)
                         os.rename(self.path + directory, self.path + new_dir)
+                except OSError as e:
+                    print('Unable to rename directory {0}.'.format(directory))
+                    print(e)
 
             for name in files:
                 if len(name) > 255:
@@ -56,7 +59,7 @@ class WindowsMigrate:
                 # Create a copy of the filename to work with. Next we grab the file extension
                 # for use later on. Then we remove any invalid characters.
                 new_name, ext = os.path.splitext(name)
-                new_name = trim_invalid_chars(new_name) 
+                new_name = trim_invalid_chars(new_name)
                 ext = trim_invalid_chars(ext)
 
                 try:
