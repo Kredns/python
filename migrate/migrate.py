@@ -37,9 +37,9 @@ class WindowsMigrate:
     def fix_filenames(self):
         # After I'm finished testing this os.walk will just be called on /home.
         # For now however I'm just calling it on test data.
-        for root, dirs, files in os.walk(self.HOME + '/python/migrate/test_data'):
+        for root, dirs, files in os.walk(self.HOME + '/test_data'):
             self.path = root + '/'
-            
+
             for name in files:
                 if len(name) > 255:
                     # TODO: Truncate filename.
@@ -60,7 +60,7 @@ class WindowsMigrate:
                     print('Unable to rename file {0}.'.format(name))
                     print(e)
 
-        for root, dirs, files in os.walk(self.HOME + '/python/migrate/test_data'):
+        for root, dirs, files in os.walk(self.HOME + '/test_data'):
             self.path = root + '/'
 
             for directory in dirs:
