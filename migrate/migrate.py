@@ -8,15 +8,27 @@ import argparse
 
 class WindowsMigrate:
     def __init__(self):
-        self.HOME = os.path.expanduser('~')
+        self.home = ''
         self.path = ''
         self.valid_chars = "-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+    def check_username(self, username):
+        if not username:
+            print('[ERROR]: You must enter a username!')
+            return False
+
+        if os.path.exist('/home/' + username):
+            self.home = '/home/' + username
+            return True
+        else:
+            print('[ERROR]: User not found')
+            return False
 
     def initial_cleanup(self):
         # The first thing we need to do is delete .macromedia as it is not needed and
         # usually contains file paths longer than 260 characters.
-        shutil.rmtree(self.HOME + '/.macromedia', ignore_errors=True)
-        shutil.rmtree(self.HOME + '/.cache/mozilla/firefox', ignore_errors=True)
+        shutil.rmtree(self.home + '/.macromedia', ignore_errors=True)
+        shutil.rmtree(self.home + '/.cache/mozilla/firefox', ignore_errors=True)
 
     def check_dupes(self, new_name, ext=''):
         dup_count = 0
@@ -35,9 +47,7 @@ class WindowsMigrate:
         return ''.join(c for c in string if c in self.valid_chars)
 
     def fix_filenames(self):
-        # After I'm finished testing this os.walk will just be called on /home.
-        # For now however I'm just calling it on test data.
-        for root, dirs, files in os.walk(self.HOME + '/test_data'):
+        for root, dirs, files in os.walk(self.home):
             self.path = root + '/'
 
             for name in files:
@@ -60,7 +70,7 @@ class WindowsMigrate:
                     print('Unable to rename file {0}.'.format(name))
                     print(e)
 
-        for root, dirs, files in os.walk(self.HOME + '/test_data'):
+        for root, dirs, files in os.walk(self.home + '/test_data'):
             self.path = root + '/'
 
             for directory in dirs:
@@ -85,5 +95,14 @@ if __name__ == '__main__':
         migration.fix_filenames()
         sys.exit(0)
 
-    print("You should not be running this on your machine. It will delete", end=' ')
-    print("several files and rename others.")
+    print('Welcome to the Windows Migrate tool. This program will rename folders and files so that', end=' ')
+    print('they can be moved to Windows without causing issues due to illegal characters or paths', end=' ')
+    print('too long.\n')
+    username = input('Please enter the username of the user who you are migrating: ')
+
+    success = migration.check_username(username)
+    if not success:
+        print('Aborting...')
+        sys.exit(1)
+
+
