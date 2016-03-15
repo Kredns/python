@@ -82,10 +82,10 @@ class WindowsMigrate:
 
                 try:
                     if name != (new_name + ext):
+                        new_name = self.check_dupes(new_name, ext)
                         if self.log:
                             logging.info('Renaming file {old} to {new}{ext}'.format(old=self.path + name, new=new_name, ext=ext))
                         print('Renaming file {old} to {new}{ext}.'.format(old=name, new=new_name, ext=ext))
-                        new_name = self.check_dupes(new_name, ext)
                         os.rename(self.path + name, self.path + new_name + ext)
                         self.changed += 1
                 except OSError as e:
@@ -102,10 +102,10 @@ class WindowsMigrate:
                 new_dir = self.trim_invalid_chars(directory)
                 try:
                     if new_dir != directory:
+                        new_dir = self.check_dupes(new_dir)
                         if self.log:
                             logging.info('Renaming directory {0} to {1}'.format(self.path + directory, new_dir))
                         print('Renaming directory {0} to {1}'.format(directory, new_dir))
-                        new_dir = self.check_dupes(new_dir)
                         os.rename(self.path + directory, self.path + new_dir)
                         self.changed += 1
                 except OSError as e:
