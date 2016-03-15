@@ -18,7 +18,7 @@ class WindowsMigrate:
     def __init__(self, log=False):
         self.log = log
         if log:
-            logging.basicConfig(filename='output.log', format='%(levelname)s:%(message)s')
+            logging.basicConfig(filename='output.log', format='%(levelname)s:%(message)s', level=logging.DEBUG)
         self.changed = 0
         self.home = ''
         self.path = ''
@@ -83,14 +83,14 @@ class WindowsMigrate:
                 try:
                     if name != (new_name + ext):
                         if self.log:
-                            log.info('Renaming file {old} to {new}{ext}'.format(old=self.path + name, new=new_name, ext=ext))
+                            logging.info('Renaming file {old} to {new}{ext}'.format(old=self.path + name, new=new_name, ext=ext))
                         print('Renaming file {old} to {new}{ext}.'.format(old=name, new=new_name, ext=ext))
                         new_name = self.check_dupes(new_name, ext)
                         os.rename(self.path + name, self.path + new_name + ext)
                         self.changed += 1
                 except OSError as e:
                     if self.log:
-                        log.debug('Failed to rename: {0} Was trying to use {1} Error message {2}'.format(self.path + name, 
+                        logging.debug('Failed to rename: {0} Was trying to use {1} Error message {2}'.format(self.path + name, 
                             new_name, e))
                     print('Unable to rename file {0}.'.format(name))
                     print(e)
@@ -103,19 +103,21 @@ class WindowsMigrate:
                 try:
                     if new_dir != directory:
                         if self.log:
-                            log.info('Renaming directory {0} to {1}'.format(self.path + directory, new_dir))
+                            logging.info('Renaming directory {0} to {1}'.format(self.path + directory, new_dir))
                         print('Renaming directory {0} to {1}'.format(directory, new_dir))
                         new_dir = self.check_dupes(new_dir)
                         os.rename(self.path + directory, self.path + new_dir)
                         self.changed += 1
                 except OSError as e:
                     if self.logg:
-                        log.debug('Failed to rename directory: {0} Was trying to use: {1} Error message {2}'.format(
+                        logging.debug('Failed to rename directory: {0} Was trying to use: {1} Error message {2}'.format(
                             self.path + directory, name, e))
                     print(Color.ERROR + '[ERROR]: Unable to rename directory {0}.'.format(directory) + Color.ENDC)
                     print(e)
 
     def results(self):
+        if self.log:
+            logging.info('A total of {0} files and folders have been renamed.'.format(self.changed))
         print('A total of {0} files and folders have been renamed.'.format(self.changed))
 
 def main():
@@ -133,6 +135,7 @@ def main():
     if args.debug:
         migration.home = os.path.expanduser('~') + '/test_data'
         migration.fix_filenames()
+        migration.results()
         sys.exit(0)
 
     if args.user:
