@@ -18,7 +18,7 @@ class WindowsMigrate:
             print('[ERROR]: You must enter a username!')
             return False
 
-        if os.path.exist('/home/' + username):
+        if os.path.exists('/home/' + username):
             self.home = '/home/' + username
             return True
         else:
