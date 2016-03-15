@@ -11,7 +11,7 @@ class WindowsMigrate:
         self.changed = 0
         self.home = ''
         self.path = ''
-        self.valid_chars = "-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        self.valid_chars = "&-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
     def check_username(self, username):
         if not username:
