@@ -69,7 +69,7 @@ class WindowsMigrate:
 
             for name in files:
                 if len(name) > 255:
-                    # TODO: Truncate filename.
+                    # TODO: Truncate folder and/or filename.
                     if self.log:
                         log.warning('File {0} needs to be shortened!'.format(path + name))
                     print(Color.WARNING + '{0} needs to be shortened before moving to Windows.'.format(name) + Color.ENDC)
