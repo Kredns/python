@@ -72,7 +72,7 @@ class WindowsMigrate:
                     # TODO: Truncate filename.
                     if self.log:
                         log.warning('File {0} needs to be shortened!'.format(path + name))
-                    print(Color.WARNING + 'File {0} needs to be shortened.'.format(name) + Color.ENDC)
+                    print(Color.WARNING + '{0} needs to be shortened before moving to Windows.'.format(name) + Color.ENDC)
 
                 # Create a copy of the filename to work with. Next we grab the file extension
                 # for use later on. Then we remove any invalid characters.
@@ -151,6 +151,7 @@ def main():
         print('Aborting...')
         sys.exit(1)
 
+    print('Start migration for {0}.'.format(username))
     migration.initial_cleanup()
     migration.fix_filenames()
     migration.results()
