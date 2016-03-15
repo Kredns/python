@@ -8,6 +8,7 @@ import argparse
 
 class WindowsMigrate:
     def __init__(self):
+        self.changed = 0
         self.home = ''
         self.path = ''
         self.valid_chars = "-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -66,11 +67,12 @@ class WindowsMigrate:
                         print('Renaming file {old} to {new}{ext}.'.format(old=name, new=new_name, ext=ext))
                         new_name = self.check_dupes(new_name, ext)
                         os.rename(self.path + name, self.path + new_name + ext)
+                        self.changed += 1
                 except OSError as e:
                     print('Unable to rename file {0}.'.format(name))
                     print(e)
 
-        for root, dirs, files in os.walk(self.home + '/test_data'):
+        for root, dirs, files in os.walk(self.home):
             self.path = root + '/'
 
             for directory in dirs:
@@ -80,11 +82,15 @@ class WindowsMigrate:
                         print('Renaming directory {0} to {1}'.format(directory, new_dir))
                         new_dir = self.check_dupes(new_dir)
                         os.rename(self.path + directory, self.path + new_dir)
+                        self.changed += 1
                 except OSError as e:
                     print('Unable to rename directory {0}.'.format(directory))
                     print(e)
 
-if __name__ == '__main__':
+    def results(self):
+        print('A total of {0} files and folders have been renamed.'.format(self.changed))
+
+def main():
     parser = argparse.ArgumentParser(description='Prep files to be moved to Windows from *nix.')
     parser.add_argument('--debug', '-d', action='store_true', help='debug mode is used for testing this script')
     args = parser.parse_args()
@@ -92,6 +98,7 @@ if __name__ == '__main__':
     migration = WindowsMigrate()
 
     if args.debug:
+        migration.home = os.path.expanduser('~') + '/test_data'
         migration.fix_filenames()
         sys.exit(0)
 
@@ -105,4 +112,9 @@ if __name__ == '__main__':
         print('Aborting...')
         sys.exit(1)
 
+    migration.initial_cleanup()
+    migration.fix_filenames()
+    migration.results()
 
+if __name__ == '__main__':
+    main()
