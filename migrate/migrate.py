@@ -102,9 +102,9 @@ def main():
         migration.fix_filenames()
         sys.exit(0)
 
-    print('Welcome to the Windows Migrate tool. This program will rename folders and files so that', end=' ')
-    print('they can be moved to Windows without causing issues due to illegal characters or paths', end=' ')
-    print('too long.\n')
+    print('Welcome to the Windows Migrate tool. This program will rename folders and files')
+    print('so that they can be moved to Windows without causing issues due to illegal')
+    print('characters or paths that are too long.\n')
     username = input('Please enter the username of the user who you are migrating: ')
 
     success = migration.check_username(username)
