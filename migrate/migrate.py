@@ -17,8 +17,6 @@ class Color:
 class WindowsMigrate:
     def __init__(self, log=False):
         self.log = log
-        if log:
-            logging.basicConfig(filename='output.log', format='%(levelname)s:%(message)s', level=logging.DEBUG)
         self.changed = 0
         self.home = ''
         self.path = ''
@@ -139,12 +137,15 @@ def main():
         sys.exit(0)
 
     if args.user:
-        username = user
+        username = args.user
     else:
         print('Welcome to the Windows Migrate tool. This program will rename folders and files')
         print('so that they can be moved to Windows without causing issues due to illegal')
         print('characters or paths that are too long.\n')
         username = input('Please enter the username of the user who you are migrating: ')
+
+    if args.log:
+        logging.basicConfig(filename=args.user + '.log', format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
     success = migration.check_username(username)
     if not success:
