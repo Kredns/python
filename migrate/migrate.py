@@ -90,7 +90,7 @@ class WindowsMigrate:
                         self.changed += 1
                 except OSError as e:
                     if self.log:
-                        logging.debug('Failed to rename: {0} Was trying to use {1} Error message {2}'.format(self.path + name, 
+                        logging.debug('Failed to rename: {0} Was trying to use {1} Error message {2}'.format(self.path + name,
                             new_name, e))
                     print('Unable to rename file {0}.'.format(name))
                     print(e)
