@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import os
 import sys
@@ -28,7 +28,7 @@ class WindowsMigrate:
         if not username:
             if log:
                 logging.debug('User did not enter a username.')
-            print(Color.ERROR + '[ERROR]: You must enter a username!' + Color.ENDC)
+            print Color.ERROR + '[ERROR]: You must enter a username!' + Color.ENDC
             return False
 
         if os.path.exists('/home/' + username):
@@ -37,13 +37,13 @@ class WindowsMigrate:
         else:
             if log:
                 logging.debug('Username that user enter was not found in /home.')
-            print(Color.ERROR + '[ERROR]: User not found'+ Color.ENDC)
+            print Color.ERROR + '[ERROR]: User not found'+ Color.ENDC
             return False
 
     def initial_cleanup(self):
         # The first thing we need to do is delete .macromedia as it is not needed and
         # usually contains file paths longer than 260 characters.
-        print(Color.WARNING + 'Deleting ~/.macromedia and ~/.cache/mozilla/firefox!' + Color.ENDC)
+        print Color.WARNING + 'Deleting ~/.macromedia and ~/.cache/mozilla/firefox!' + Color.ENDC
         shutil.rmtree(self.home + '/.macromedia', ignore_errors=True)
         shutil.rmtree(self.home + '/.cache/mozilla/firefox', ignore_errors=True)
 
@@ -72,7 +72,7 @@ class WindowsMigrate:
                     # TODO: Truncate folder and/or filename.
                     if self.log:
                         log.warning('File {0} needs to be shortened!'.format(path + name))
-                    print(Color.WARNING + '{0} needs to be shortened before moving to Windows.'.format(name) + Color.ENDC)
+                    print Color.WARNING + '{0} needs to be shortened before moving to Windows.'.format(name) + Color.ENDC
 
                 # Create a copy of the filename to work with. Next we grab the file extension
                 # for use later on. Then we remove any invalid characters.
@@ -84,7 +84,7 @@ class WindowsMigrate:
                     if name != (new_name + ext):
                         if self.log:
                             logging.info('Renaming file {old} to {new}{ext}'.format(old=self.path + name, new=new_name, ext=ext))
-                        print('Renaming file {old} to {new}{ext}.'.format(old=name, new=new_name, ext=ext))
+                        print 'Renaming file {old} to {new}{ext}.'.format(old=name, new=new_name, ext=ext)
                         new_name = self.check_dupes(new_name, ext)
                         os.rename(self.path + name, self.path + new_name + ext)
                         self.changed += 1
@@ -92,8 +92,8 @@ class WindowsMigrate:
                     if self.log:
                         logging.debug('Failed to rename: {0} Was trying to use {1} Error message {2}'.format(self.path + name,
                             new_name, e))
-                    print('Unable to rename file {0}.'.format(name))
-                    print(e)
+                    print 'Unable to rename file {0}.'.format(name)
+                    print e
 
         for root, dirs, files in os.walk(self.home):
             self.path = root + '/'
@@ -104,7 +104,7 @@ class WindowsMigrate:
                     if new_dir != directory:
                         if self.log:
                             logging.info('Renaming directory {0} to {1}'.format(self.path + directory, new_dir))
-                        print('Renaming directory {0} to {1}'.format(directory, new_dir))
+                        print 'Renaming directory {0} to {1}'.format(directory, new_dir)
                         new_dir = self.check_dupes(new_dir)
                         os.rename(self.path + directory, self.path + new_dir)
                         self.changed += 1
@@ -112,13 +112,13 @@ class WindowsMigrate:
                     if self.logg:
                         logging.debug('Failed to rename directory: {0} Was trying to use: {1} Error message {2}'.format(
                             self.path + directory, name, e))
-                    print(Color.ERROR + '[ERROR]: Unable to rename directory {0}.'.format(directory) + Color.ENDC)
-                    print(e)
+                    print Color.ERROR + '[ERROR]: Unable to rename directory {0}.'.format(directory) + Color.ENDC
+                    print e
 
     def results(self):
         if self.log:
             logging.info('A total of {0} files and folders have been renamed.'.format(self.changed))
-        print('A total of {0} files and folders have been renamed.'.format(self.changed))
+        print 'A total of {0} files and folders have been renamed.'.format(self.changed)
 
 def main():
     parser = argparse.ArgumentParser(description='Prep files to be moved to Windows from *nix.')
@@ -141,17 +141,17 @@ def main():
     if args.user:
         username = user
     else:
-        print('Welcome to the Windows Migrate tool. This program will rename folders and files')
-        print('so that they can be moved to Windows without causing issues due to illegal')
-        print('characters or paths that are too long.\n')
-        username = input('Please enter the username of the user who you are migrating: ')
+        print 'Welcome to the Windows Migrate tool. This program will rename folders and files'
+        print 'so that they can be moved to Windows without causing issues due to illegal'
+        print 'characters or paths that are too long.\n'
+        username = raw_input('Please enter the username of the user who you are migrating: ')
 
     success = migration.check_username(username)
     if not success:
-        print('Aborting...')
+        print 'Aborting...'
         sys.exit(1)
 
-    print('Start migration for {0}.'.format(username))
+    print 'Start migration for {0}.'.format(username)
     migration.initial_cleanup()
     migration.fix_filenames()
     migration.results()
