@@ -145,7 +145,7 @@ def main():
         username = raw_input('Please enter the username of the user who you are migrating: ')
 
     if args.log:
-        logging.basicConfig(filename=args.log + '.log', format='%(levelname)s:%(message)s', level=logging.DEBUG)
+        logging.basicConfig(filename=username + '.log', format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
     success = migration.check_username(username)
     if not success:
