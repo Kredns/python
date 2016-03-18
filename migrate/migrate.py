@@ -107,7 +107,7 @@ class WindowsMigrate:
                         os.rename(self.path + directory, self.path + new_dir)
                         self.changed += 1
                 except OSError as e:
-                    if self.logg:
+                    if self.log:
                         logging.debug('Failed to rename directory: {0} Was trying to use: {1} Error message {2}'.format(
                             self.path + directory, name, e))
                     print Color.ERROR + '[ERROR]: Unable to rename directory {0}.'.format(directory) + Color.ENDC
