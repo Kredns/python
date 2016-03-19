@@ -61,7 +61,7 @@ class WindowsMigrate:
     def trim_invalid_chars(self, string):
         return ''.join(c for c in string if c in self.valid_chars)
 
-    def fix_filenames(self):
+    def fix_names(self):
         for root, dirs, files in os.walk(self.home):
             self.path = root + '/'
 
