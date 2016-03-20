@@ -61,7 +61,7 @@ class WindowsMigrate:
     def trim_invalid_chars(self, string):
         return ''.join(c for c in string if c in self.valid_chars)
 
-    def fix_filenames(self):
+    def fix_names(self):
         for root, dirs, files in os.walk(self.home):
             self.path = root + '/'
 
@@ -132,7 +132,7 @@ def main():
 
     if args.debug:
         migration.home = os.path.expanduser('~') + '/test_data'
-        migration.fix_filenames()
+        migration.fix_names()
         migration.results()
         sys.exit(0)
 
@@ -154,7 +154,7 @@ def main():
 
     print('Start migration for {0}.'.format(username))
     migration.initial_cleanup()
-    migration.fix_filenames()
+    migration.fix_names()
     migration.results()
 
 if __name__ == '__main__':
