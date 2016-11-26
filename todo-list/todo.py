@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # My solution to the following challenge: https://redd.it/39ws1x
 
-# I'm probably going to have to redo this whole thing to use a dictornary.
-
 from datetime import date
 
 class Todo:
