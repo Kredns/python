@@ -1,29 +1,29 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # My solution to the following challenge: https://redd.it/39ws1x
 
 # I'm probably going to have to redo this whole thing to use a dictornary.
 
 from datetime import date
 
-class ToDo():
-	def __init__(self):
-		self.items = []
+class Todo:
+    def __init__(self):
+        self.items = {}
 
-	def addItem(self, item, category='default'):
-		if not item:
-			print("You cannot add a blank item.")
-			return
+    def add_item(self, item, tag):
+        self.items[tag] = item
 
-		self.items.append([item, category])
-	
-	def removeItem(self, item):
-		# This has got to be fixed to accomdate for categories.
-		if item in self.items:
-			self.items.remove(item)
-	
-	def list(self):
-		for item in self.items:
-			print(self.items)
+    def remove_item(self, item, tag):
+        pass
 
+    def print_all_items(self):
+        for item in self.items:
+            pass
+
+    def __str__(self):
+        return str(self.items)
+        
 if __name__ == '__main__':
-	pass
+    todo = Todo()
+    # I actually need to do this, for real.
+    todo.add_item('Get an oil change.', 'Car')
+    print todo
