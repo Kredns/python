@@ -16,7 +16,7 @@ class Todo:
     def __load_items(self):
         try:
             with open(home + '/.config/todo/list', 'r') as todo:
-                for item in todo.readline():
+                for t in todo.readline():
                     # TODO: Need to figure out a way to store tags and items.
                     pass
         except IOError:
