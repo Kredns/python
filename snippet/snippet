@@ -4,14 +4,15 @@ import os
 import sys
 import operator
 import argparse
+from color import Color
 try:
     import pyperclip
 except ImportError:
-    print 'You need to install pyperclip. sudo pip install pyperclip.'
-    print 'If you do not have pip installed you will need to install that ', \
-          'using your systems package manager.'
-
-from color import Color
+    print Color.ERROR + 'You need to install pyperclip. sudo pip install', \
+    'pyperclip' + Color.ENDC
+    print 'If you do not have pip installed you will need to install that', \
+    'using your systems package manager.'
+    sys.exit(9)
 
 home = os.path.expanduser('~')
 config_path = home + '/.config/snippets/'
