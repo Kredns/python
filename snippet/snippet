@@ -4,7 +4,12 @@ import os
 import sys
 import operator
 import argparse
-import pyperclip
+try:
+    import pyperclip
+except ImportError:
+    print 'You need to install pyperclip. sudo pip install pyperclip.'
+    print 'If you do not have pip installed you will need to install that ', \
+          'using your systems package manager.'
 
 from color import Color
 
@@ -62,9 +67,11 @@ def choose_snippet(name, tech, silent=False):
     snippet_files = [f for f in os.listdir(snippet_path) 
                     if os.path.isfile(os.path.join(snippet_path, f))]
     # Because the $tech file lives in ~/.config/snippets as well, we must
-    # remove it, otherwise the program is a little off.
+    # remove it, otherwise the program is a little off. Same with the README.md
+    # and .gitignore.
     snippet_files.remove('tech')
     snippet_files.remove('README.md')
+    snippet_files.remove('.gitignore')
     snippets = []
     for snippet in snippet_files:
         with open(snippet_path + snippet, 'r') as s:
