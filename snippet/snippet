@@ -67,11 +67,17 @@ def choose_snippet(name, tech, silent=False):
     snippet_files = [f for f in os.listdir(snippet_path) 
                     if os.path.isfile(os.path.join(snippet_path, f))]
     # Because the $tech file lives in ~/.config/snippets as well, we must
-    # remove it, otherwise the program is a little off. Same with the README.md
-    # and .gitignore.
+    # remove it, otherwise the program is a little off. 
     snippet_files.remove('tech')
-    snippet_files.remove('README.md')
-    snippet_files.remove('.gitignore')
+
+    # This file is not included because it is specific to my templates. It
+    # contains things like .gitignore, a README, etc. You can add anything you
+    # like to yours. This is to remove anything that is not a template from
+    # ~/.config/snippets
+    with open('non_template_files', 'r') as ntf:
+        for line in ntf.readlines():
+            snippet_files.remove(line.strip())
+
     snippets = []
     for snippet in snippet_files:
         with open(snippet_path + snippet, 'r') as s:
