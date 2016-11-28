@@ -58,9 +58,8 @@ def missing_config():
     if not name:
         print 'You did not enter anything.'
         sys.exit(8)
-    tech_file = open(config_path + config_filename, 'w')
-    tech_file.write(name)
-    tech_file.close()
+    with open(config_path + config_filename, 'w') as tech_file:
+        tech_file.write(name)
     print 'Now rerun this program and it should work! :)'
     sys.exit(2)
 
