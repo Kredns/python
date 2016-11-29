@@ -116,7 +116,7 @@ def load_snippet_from_file(snippet, name, tech):
     except IOError:
         print Color.ERROR + 'Sorry that file could not be found.' + Color.ENDC
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description='Copies snippets into your clipboard and addresses user personally. Signs snippets with your signature.')
     parser.add_argument('--name', '-n', nargs='?', help='first or full name of the user, if using full name add double quotes (ie. "Lucas McCoy")')
     parser.add_argument('--file', '-f', nargs='?', help='provide a filename to skip prompts, requires -n and implies -s')
@@ -149,3 +149,17 @@ if __name__ == '__main__':
         choose_snippet(name, tech, True)
     else:
         choose_snippet(name, tech)
+
+if __name__ == '__main__':
+    try:
+        main() 
+    except (KeyboardInterrupt, EOFError) as e:
+        # I still cannot figure out why hitting Ctrl-C does not kill this
+        # program immediately. It seems to be implementation specific and
+        # related to readline. See the linked mailing list for more info:
+        # https://mail.python.org/pipermail/python-list/1999-October/011368.html
+        # I even tried implementing my own signal handler and this did not force
+        # the program to terminate when Ctrl-C was pressed. I've spent more time
+        # trying to find a solution to this than I did on this entire script.
+        # Such is the life of a programmer.
+        sys.exit(100)
