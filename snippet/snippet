@@ -73,10 +73,12 @@ def choose_snippet(name, tech, silent=False):
     # This file is not included because it is specific to my templates. It
     # contains things like .gitignore, a README, etc. You can add anything you
     # like to yours. This is to remove anything that is not a template from
-    # ~/.config/snippets
-    with open('non_template_files', 'r') as ntf:
-        for line in ntf.readlines():
-            snippet_files.remove(line.strip())
+    # ~/.config/snippets, if non_template_files does not exist then this will
+    # assume that you do not have anything that needs to be removed.
+    if os.path.exists('non_template_files'):
+        with open('non_template_files', 'r') as ntf:
+            for line in ntf.readlines():
+                snippet_files.remove(line.strip())
 
     snippets = []
     for snippet in snippet_files:
