@@ -140,6 +140,7 @@ def main():
     tech = ''
     with open(config_path + config_filename, 'r') as config:
         tech = config.readline() 
+        tech = tech.strip()
 
     if args.file:
         load_snippet_from_file(args.file, name, tech) 
