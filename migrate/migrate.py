@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+from __future__ import print_function
 
 import os
 import sys
@@ -24,16 +25,19 @@ class WindowsMigrate:
 
     def check_username(self, username):
         if not username:
-            if log:
+            if self.log:
                 logging.debug('User did not enter a username.')
             print(Color.ERROR + '[ERROR]: You must enter a username!' + Color.ENDC)
             return False
 
-        if os.path.exists('/home/' + username):
+        if os.path.exists('/home/' + username): 
             self.home = '/home/' + username
             return True
+        elif os.path.exists('/Users/' + username):
+            self.home = '/Users/' + username
+            return True
         else:
-            if log:
+            if self.log:
                 logging.debug('Username that user enter was not found in /home.')
             print(Color.ERROR + '[ERROR]: User not found'+ Color.ENDC)
             return False
@@ -142,6 +146,8 @@ def main():
         print('Welcome to the Windows Migrate tool. This program will rename folders and files')
         print('so that they can be moved to Windows without causing issues due to illegal')
         print('characters or paths that are too long.\n')
+        try: input = raw_input
+        except NameError: pass
         username = input('Please enter the username of the user who you are migrating: ')
 
     if args.log:
