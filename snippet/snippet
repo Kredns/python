@@ -70,13 +70,22 @@ def choose_snippet(name, tech, silent=False):
     # remove it, otherwise the program is a little off. 
     snippet_files.remove('tech')
 
-    # This file is not included because it is specific to my templates. It
+    # The non_template_files is a text file that gets read if it exist and
     # contains things like .gitignore, a README, etc. You can add anything you
     # like to yours. This is to remove anything that is not a template from
     # ~/.config/snippets, if non_template_files does not exist then this will
     # assume that you do not have anything that needs to be removed.
-    if os.path.exists('non_template_files'):
-        with open('non_template_files', 'r') as ntf:
+
+    # This line is here because I discovered a bug that if you make a symlink
+    # and then run this program it looked for the ntf file in the symlinks path
+    # instead of where the program was actually being run from. To fix that we
+    # use the realpath which follows symlinks correctly. The last 8 characters
+    # are trimmed off because it contains the filename of this program which is
+    # not needed.
+    ntf_path = os.path.isfile(os.path.realpath(__file__)[:-8] 
+    
+    if ntf_path + '/non_template_files'):
+        with open(ntf_path + '/non_template_files', 'r') as ntf:
             for line in ntf.readlines():
                 snippet_files.remove(line.strip())
 
