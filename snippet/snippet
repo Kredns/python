@@ -82,9 +82,9 @@ def choose_snippet(name, tech, silent=False):
     # use the realpath which follows symlinks correctly. The last 8 characters
     # are trimmed off because it contains the filename of this program which is
     # not needed.
-    ntf_path = os.path.isfile(os.path.realpath(__file__)[:-8] 
+    ntf_path = os.path.realpath(__file__)[:-8] 
     
-    if ntf_path + '/non_template_files'):
+    if os.path.isfile(ntf_path + '/non_template_files'):
         with open(ntf_path + '/non_template_files', 'r') as ntf:
             for line in ntf.readlines():
                 snippet_files.remove(line.strip())
