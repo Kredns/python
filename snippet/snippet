@@ -155,7 +155,7 @@ def main():
 
     if args.file:
         load_snippet_from_file(args.file, name, tech) 
-        sys.exit(7)
+        sys.exit(0)
 
     if args.silent:
         choose_snippet(name, tech, True)
