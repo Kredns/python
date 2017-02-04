@@ -1,26 +1,32 @@
 #!/usr/bin/env python
 
 import os
+import re
 import sys
+from trello import TrelloApi
 
-def main():
-    with open('test_todos.py', 'r') as f:
+def find_todos(program):
+    """Finds any occurrences of TODO and returns the entire line."""
+    lines = None
+    pattern = r'((TODO|todo).*)'
+    with open(program, 'r') as f:
         # We do not care about the first line of the file because that should
         # be a shebang.
         f.readline()       
-        is_comment = False
-        for line in f:
-            if (line.upper().startswith('# TODO:') or 
-                line.upper().startswith('#TODO:') or 
-                line.upper().startswith('#TODO') or
-                line.upper().startswith('# TODO')):
-                print line[7:].strip('#TODO: ')
-                is_comment = True
-            else:
-                if line.startswith('#'):
-                    print line[2:].strip('# ')
-                else:
-                    is_comment = False
+        lines = f.readlines()
+
+    for line in lines:
+        match = re.search(pattern, line)
+        if match:
+            yield match.group()
+
+def main():
+    todos = find_todos('test_todos.py')
+    for todo in todos:
+        print todo
+
+    trello = TrelloApi(TRELLO_APP_KEY)
+    trello.get_token_url('trello_todo', expires='30days', write_access=True)
 
 if __name__ == '__main__':
     try:
