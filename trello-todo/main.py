@@ -20,17 +20,22 @@ def find_todos(program):
         if match:
             yield match.group()
 
-def main():
-    todos = find_todos('test_todos.py')
+def main(filename):
+    todos = find_todos(filename)
     for todo in todos:
         print todo
 
+    TRELLO_APP_KEY = None
+    with open('TRELLO_APP_KEY', 'r') as keyfile:
+        TRELLO_APP_KEY = keyfile.readline()
     trello = TrelloApi(TRELLO_APP_KEY)
-    trello.get_token_url('trello_todo', expires='30days', write_access=True)
 
 if __name__ == '__main__':
     try:
-        main()
+        if len(sys.argv) > 1:
+            main(sys.argv[1])
+        else:
+            main('test_todos.py')
     except KeyboardInterrupt:
         print
         sys.exit(0)
