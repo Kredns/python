@@ -3,7 +3,7 @@
 import os
 import re
 import sys
-from trello import TrelloApi
+from trello import *
 
 def find_todos(program):
     """Finds any occurrences of TODO and returns the entire line."""
@@ -26,9 +26,12 @@ def main(filename):
         print todo
 
     TRELLO_APP_KEY = None
-    with open('TRELLO_APP_KEY', 'r') as keyfile:
-        TRELLO_APP_KEY = keyfile.readline()
-    trello = TrelloApi(TRELLO_APP_KEY)
+    AUTH_TOKEN = None
+    with open('TRELLO_APP_KEY', 'r') as k:
+        TRELLO_APP_KEY = k.readline()
+    with open('AUTH_TOKEN', 'r') as t:
+        AUTH_TOKEN = t.readline()
+    trello = TrelloApi(TRELLO_APP_KEY, AUTH_TOKEN)
 
 if __name__ == '__main__':
     try:
