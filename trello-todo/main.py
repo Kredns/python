@@ -5,18 +5,21 @@ import re
 import sys
 from trello import TrelloClient
 
+class TodoNotFoundException(Exception):
+    pass
+
 class TrelloTodo(object):
     def __init__(self, API_KEY, AUTH_TOKEN, board):
         self.prefixes = ['TODO:', 'TODO: ', 'todo:', 'todo: ', 'TODO ', 'todo ']
         self.client = TrelloClient(API_KEY, token=AUTH_TOKEN)
-        self.board = self.client.get_board(board)
-        lists = self.board.get_lists('all')
-        # In order for this to work TODO has to be the first list on the board.
-        lists.reverse()
-        self.todo = lists.pop()
+        board = self.client.get_board(board)
+        lists = board.get_lists('all')
+        self.todo_cards = self.__get_todo(lists)
+        if not self.todo_cards:
+            raise TodoNotFoundException
 
-    def __strip_prefixes(self, string, prefixes):
-        for prefix in prefixes:
+    def strip_prefixes(self, string):
+        for prefix in self.prefixes:
             if string.startswith(prefix):
                 return string[len(prefix):].lstrip()
         return string
@@ -24,20 +27,35 @@ class TrelloTodo(object):
     def __archive_all_cards(self):
         pass
 
-    def find_todos(self, program):
-        """Finds any occurrences of TODO and returns the entire line."""
-        lines = None
-        # I know I could use a better regular expressiosn to get the perfect match
-        # and remove the TODO's, but I'd rather do that via python instead of some
-        # insane RegEx that I won't be able to understand a week from now.
-        pattern = r'((TODO|todo).*)'
-        with open(program, 'r') as f:
-            lines = f.readlines()
+    def __get_todo(self, lists):
+        for l in lists:
+            if 'TODO' in l.name.upper():
+                return l
+        return None
+    
+    def get_cards(self):
+        cards = []
+        for card in self.todo_cards.list_cards():
+            cards.append(card.name)
+        return cards
+    
+    def add_card(self, card):
+        self.todo_cards.add_card(card)
 
-        for line in lines:
-            match = re.search(pattern, line)
-            if match:
-                yield match.group()
+def read_todo_from_file(filename):
+    """Finds any occurrences of TODO and returns the entire line."""
+    lines = None
+    # I know I could use a better regular expressiosn to get the perfect match
+    # and remove the TODO's, but I'd rather do that via python instead of some
+    # insane RegEx that I won't be able to understand a week from now.
+    pattern = r'((TODO|todo).*)'
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+
+    for line in lines:
+        match = re.search(pattern, line)
+        if match:
+            yield match.group()
 
 def main(filename):
     API_KEY = None
@@ -48,10 +66,21 @@ def main(filename):
         AUTH_TOKEN = t.readline().strip()
 
     board_id = '6yIqXMb5'
-    todo = TrelloTodo(API_KEY, AUTH_TOKEN, board_id)
-    for item in todo.find_todos(filename):
-        print item
+    trello = None
+    try:
+        trello = TrelloTodo(API_KEY, AUTH_TOKEN, board_id)
+    except TodoNotFoundException:
+        print 'Unable to find a TODO list on your Trello board.'
+        sys.exit(1)
 
+    todos = read_todo_from_file(filename)
+    cards = trello.get_cards()
+
+    for item in todos:
+        item = trello.strip_prefixes(item)
+        if item not in cards:
+            trello.add_card(item)
+    
 if __name__ == '__main__':
     try:
         if len(sys.argv) > 1:
