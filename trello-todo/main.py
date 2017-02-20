@@ -42,6 +42,9 @@ class TrelloTodo(object):
     def add_card(self, card):
         return self.todo_cards.add_card(card)
 
+    def archive_todos(self):
+        self.todo_cards.archive_all_cards()
+
 def read_todo_from_file(filename):
     """Finds any occurrences of TODO and returns the entire line."""
     lines = None
@@ -52,10 +55,10 @@ def read_todo_from_file(filename):
     with open(filename, 'r') as f:
         lines = f.readlines()
 
-    for line in lines:
+    for i, line in enumerate(lines):
         match = re.search(pattern, line)
         if match:
-            yield match.group()
+            yield [i, match.group()]
 
 def read_keys():
     """Loads keys/tokens/board id's needed to use Trello API."""
@@ -70,7 +73,6 @@ def read_keys():
 
     return (API_KEY, AUTH_TOKEN, BOARD_ID)
 
-
 def main(filename):
     api_key, auth_token, board_id = read_keys()
 
@@ -81,13 +83,19 @@ def main(filename):
         print 'Unable to find a TODO list on your Trello board.'
         sys.exit(1)
 
+    if not __debug__:
+        # Just a quick and dirty way to get a clean TODO list.
+        trello.archive_todos()
+        sys.exit(0)
+
     todos = read_todo_from_file(filename)
     cards = trello.get_cards()
 
-    for item in todos:
+    for line_number, item in todos:
         item = trello.strip_prefixes(item)
         if item not in cards:
             c = trello.add_card(item)
+            c.comment('Line number: {0}'.format(line_number))
     
 if __name__ == '__main__':
     try:
