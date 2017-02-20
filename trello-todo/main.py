@@ -12,9 +12,9 @@ class TrelloTodo(object):
     def __init__(self, API_KEY, AUTH_TOKEN, board):
         self.prefixes = ['TODO:', 'TODO: ', 'todo:', 'todo: ', 'TODO ', 'todo ']
         self.client = TrelloClient(API_KEY, token=AUTH_TOKEN)
-        board = self.client.get_board(board)
-        lists = board.get_lists('all')
-        self.todo_cards = self.__get_todo(lists)
+        self.board = self.client.get_board(board)
+        self.lists = self.board.get_lists('all')
+        self.todo_cards = self.__get_todo(self.lists)
         if not self.todo_cards:
             raise TodoNotFoundException
 
@@ -40,7 +40,7 @@ class TrelloTodo(object):
         return cards
     
     def add_card(self, card):
-        self.todo_cards.add_card(card)
+        return self.todo_cards.add_card(card)
 
 def read_todo_from_file(filename):
     """Finds any occurrences of TODO and returns the entire line."""
@@ -57,18 +57,26 @@ def read_todo_from_file(filename):
         if match:
             yield match.group()
 
-def main(filename):
+def read_keys():
+    """Loads keys/tokens/board id's needed to use Trello API."""
     API_KEY = None
     AUTH_TOKEN = None
-    with open('API_KEY', 'r') as k:
-        API_KEY = k.readline().strip()
-    with open('AUTH_TOKEN', 'r') as t:
-        AUTH_TOKEN = t.readline().strip()
+    with open('API_KEY', 'r') as f:
+        API_KEY = f.readline().strip()
+    with open('AUTH_TOKEN', 'r') as f:
+        AUTH_TOKEN = f.readline().strip()
+    with open('BOARD_ID', 'r') as f:
+        BOARD_ID = f.readline().strip()
 
-    board_id = '6yIqXMb5'
+    return (API_KEY, AUTH_TOKEN, BOARD_ID)
+
+
+def main(filename):
+    api_key, auth_token, board_id = read_keys()
+
     trello = None
     try:
-        trello = TrelloTodo(API_KEY, AUTH_TOKEN, board_id)
+        trello = TrelloTodo(api_key, auth_token, board_id)
     except TodoNotFoundException:
         print 'Unable to find a TODO list on your Trello board.'
         sys.exit(1)
@@ -79,7 +87,7 @@ def main(filename):
     for item in todos:
         item = trello.strip_prefixes(item)
         if item not in cards:
-            trello.add_card(item)
+            c = trello.add_card(item)
     
 if __name__ == '__main__':
     try:
