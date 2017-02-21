@@ -132,6 +132,7 @@ def main():
     parser.add_argument('--name', '-n', nargs='?', help='first or full name of the user, if using full name add double quotes (ie. "Lucas McCoy")')
     parser.add_argument('--file', '-f', nargs='?', help='provide a filename to skip prompts, requires -n and implies -s')
     parser.add_argument('--silent', '-s', action='store_true', help='only copy to clipboard, do not display in terminal') 
+    parser.add_argument('extra-args', nargs='*', help='replaces each occurance of $arg1 with the first argument, $arg2 by the second, and so on and so forth.')
     args = parser.parse_args()
 
     if not os.path.exists(config_path + config_filename):
