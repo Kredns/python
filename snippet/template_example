@@ -2,7 +2,7 @@ Title
 Tag
 Hello $user,
 
-More text goes here.
+More text goes here. Optional variables can be used with $arg1 and will be replaced with whatever you put as the first parameter after any named parameters.
 
 $tech
 Signature
