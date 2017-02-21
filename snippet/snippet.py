@@ -20,28 +20,40 @@ config_filename = 'tech'
 snippet_path = home + '/.config/snippets/'
 
 class Snippet:
-    def __init__(self, title, tag, text, user='$user', tech='$tech'):
+    def __init__(self, title, tag, text, user='$user', tech='$tech', extra_args=[]):
         self.user = user
         self.title = title
         self.tag = tag
         self.text = text
         self.tech = tech
+        self.extra_args = extra_args
 
     def get_snippet(self):
         self.text = self.text.replace('$user', str(self.user))
         self.text = self.text.replace('$tech', str(self.tech))
+
+        self.__replace_extra_args()
 
         return [self.title, self.text]
 
     def get_snippet_text(self):
         self.text = self.text.replace('$user', str(self.user))
         self.text = self.text.replace('$tech', str(self.tech))
-
+        
+        self.__replace_extra_args()
+        
         return self.text
+
+    def __replace_extra_args(self):
+        if self.extra_args:
+            for i, arg in enumerate(self.extra_args):
+                arg_to_replace = '$arg{0}'.format(i + 1)
+                self.text = self.text.replace(arg_to_replace, arg)
 
     def __str__(self):
         title, text = self.get_snippet()
-        return '-' * 80 + '\n' + title + '-' * 80 + '\n' + text
+        rows, cols = os.popen('stty size', 'r').read().split()
+        return '-' * int(cols) + '\n' + title + '-' * int(cols) + '\n' + text
 
 def missing_config():
     print Color.ERROR + 'You must have a config file located at', \
@@ -63,7 +75,7 @@ def missing_config():
     print 'Now rerun this program and it should work! :)'
     sys.exit(2)
 
-def choose_snippet(name, tech, silent=False):
+def choose_snippet(name, tech, silent, extra_args):
     snippet_files = [f for f in os.listdir(snippet_path) 
                     if os.path.isfile(os.path.join(snippet_path, f))]
     # Because the $tech file lives in ~/.config/snippets as well, we must
@@ -79,10 +91,10 @@ def choose_snippet(name, tech, silent=False):
     # This line is here because I discovered a bug that if you make a symlink
     # and then run this program it looked for the ntf file in the symlinks path
     # instead of where the program was actually being run from. To fix that we
-    # use the realpath which follows symlinks correctly. The last 8 characters
+    # use the realpath which follows symlinks correctly. The last 10 characters
     # are trimmed off because it contains the filename of this program which is
     # not needed.
-    ntf_path = os.path.realpath(__file__)[:-8] 
+    ntf_path = os.path.realpath(__file__)[:-10] 
     
     if os.path.isfile(ntf_path + '/non_template_files'):
         with open(ntf_path + '/non_template_files', 'r') as ntf:
@@ -93,7 +105,7 @@ def choose_snippet(name, tech, silent=False):
     for snippet in snippet_files:
         with open(snippet_path + snippet, 'r') as s:
             snippets.append(Snippet(s.readline(), s.readline(), s.read(), 
-                                    name, tech))
+                                    name, tech, extra_args))
 
     snippets.sort(key=operator.attrgetter('tag'))
     if len(snippets) == 0:
@@ -132,8 +144,7 @@ def main():
     parser.add_argument('--name', '-n', nargs='?', help='first or full name of the user, if using full name add double quotes (ie. "Lucas McCoy")')
     parser.add_argument('--file', '-f', nargs='?', help='provide a filename to skip prompts, requires -n and implies -s')
     parser.add_argument('--silent', '-s', action='store_true', help='only copy to clipboard, do not display in terminal') 
-    parser.add_argument('extra-args', nargs='*', help='replaces each occurance of $arg1 with the first argument, $arg2 by the second, and so on and so forth.')
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     if not os.path.exists(config_path + config_filename):
         missing_config()
@@ -159,14 +170,14 @@ def main():
         sys.exit(0)
 
     if args.silent:
-        choose_snippet(name, tech, True)
+        choose_snippet(name, tech, True, unknown)
     else:
-        choose_snippet(name, tech)
+        choose_snippet(name, tech, False, unknown)
 
 if __name__ == '__main__':
     try:
         main() 
-    except (KeyboardInterrupt, EOFError) as e:
+    except KeyboardInterrupt as e:
         # I still cannot figure out why hitting Ctrl-C does not kill this
         # program immediately. It seems to be implementation specific and
         # related to readline. See the linked mailing list for more info:
@@ -174,5 +185,4 @@ if __name__ == '__main__':
         # I even tried implementing my own signal handler and this did not force
         # the program to terminate when Ctrl-C was pressed. I've spent more time
         # trying to find a solution to this than I did on this entire script.
-        # Such is the life of a programmer.
         sys.exit(100)
