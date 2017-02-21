@@ -188,6 +188,9 @@ if __name__ == '__main__':
         print Color.ERROR + 'You did not provide enough arguments for this template.',
         print 'Expected {0} arguments.'.format(e) + Color.ENDC
         print 'Example: snippet.py -n Lucas argument1 argument2'
+    except pyperclip.exceptions.PyperclipException as e:
+        print Color.WARNING + 'You are probably using cygwin...and that\'s ok, but the clipboard',
+        print 'functionality isn\'t going to work.' + Color.ENDC
     except KeyboardInterrupt as e:
         # I still cannot figure out why hitting Ctrl-C does not kill this
         # program immediately. It seems to be implementation specific and
