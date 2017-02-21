@@ -3,15 +3,16 @@
 import os
 import re
 import sys
+import argparse
 from trello import TrelloClient
 
 class TodoNotFoundException(Exception):
     pass
 
 class TrelloTodo(object):
-    def __init__(self, API_KEY, AUTH_TOKEN, board):
+    def __init__(self, api_key, auth_token, board):
         self.prefixes = ['TODO:', 'TODO: ', 'todo:', 'todo: ', 'TODO ', 'todo ']
-        self.client = TrelloClient(API_KEY, token=AUTH_TOKEN)
+        self.client = TrelloClient(api_key, token=auth_token)
         self.board = self.client.get_board(board)
         self.lists = self.board.get_lists('all')
         self.todo_cards = self.__get_todo(self.lists)
@@ -73,9 +74,16 @@ def read_keys():
 
     return (API_KEY, AUTH_TOKEN, BOARD_ID)
 
-def main(filename):
+def main():
+    parser = argparse.ArgumentParser(description='Scans a program for TODO comments and adds them '
+                                                 'a Trello board.')
+    parser.add_argument('--clear-todos', '-c', action='store_true', help='Removes all items from '
+                        'trello todo list. Useful for debugging.')
+    parser.add_argument('--filename', '-f', nargs='?', help='filename of the program you want to '
+                        'scan for TODO items.', const='test_todos.py')
+    # The setup of Trello needs to be done before we get to parsing the arguments because most of
+    # the arguments use the TrelloTodo class.
     api_key, auth_token, board_id = read_keys()
-
     trello = None
     try:
         trello = TrelloTodo(api_key, auth_token, board_id)
@@ -83,26 +91,24 @@ def main(filename):
         print 'Unable to find a TODO list on your Trello board.'
         sys.exit(1)
 
-    if not __debug__:
-        # Just a quick and dirty way to get a clean TODO list.
+    args = parser.parse_args()
+    if args.clear_todos:
         trello.archive_todos()
         sys.exit(0)
 
-    todos = read_todo_from_file(filename)
-    cards = trello.get_cards()
+    if args.filename:
+        todos = read_todo_from_file(args.filename)
+        cards = trello.get_cards()
 
-    for line_number, item in todos:
-        item = trello.strip_prefixes(item)
-        if item not in cards:
-            c = trello.add_card(item)
-            c.comment('Line number: {0}'.format(line_number))
+        for line_number, item in todos:
+            item = trello.strip_prefixes(item)
+            if item not in cards:
+                c = trello.add_card(item)
+                c.comment('{0}: Line number: {1}'.format(args.filename, line_number))
     
 if __name__ == '__main__':
     try:
-        if len(sys.argv) > 1:
-            main(sys.argv[1])
-        else:
-            main('test_todos.py')
+        main()
     except KeyboardInterrupt:
         print
         sys.exit(0)
