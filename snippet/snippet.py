@@ -19,6 +19,9 @@ config_path = home + '/.config/snippets/'
 config_filename = 'tech'
 snippet_path = home + '/.config/snippets/'
 
+class VariableError(Exception):
+    pass
+
 class Snippet:
     def __init__(self, title, tag, text, user='$user', tech='$tech', extra_args=[]):
         self.user = user
@@ -27,6 +30,7 @@ class Snippet:
         self.text = text
         self.tech = tech
         self.extra_args = extra_args
+        self.expected_args = self.text.count('$arg')
 
     def get_snippet(self):
         self.text = self.text.replace('$user', str(self.user))
@@ -45,6 +49,9 @@ class Snippet:
         return self.text
 
     def __replace_extra_args(self):
+        if self.expected_args != len(self.extra_args):
+            raise VariableError(self.expected_args)
+
         if self.extra_args:
             for i, arg in enumerate(self.extra_args):
                 arg_to_replace = '$arg{0}'.format(i + 1)
@@ -131,10 +138,10 @@ def choose_snippet(name, tech, silent, extra_args):
         print snippets[int(choice) - 1]
     pyperclip.copy(snippets[int(choice) - 1].get_snippet_text())
 
-def load_snippet_from_file(snippet, name, tech):
+def load_snippet_from_file(snippet, name, tech, extra_args):
     try:
         with open(snippet_path + snippet) as s:
-            snippet = Snippet(s.readline(), s.readline(), s.read(), name, tech)
+            snippet = Snippet(s.readline(), s.readline(), s.read(), name, tech, extra_args)
             pyperclip.copy(snippet.get_snippet_text())
     except IOError:
         print Color.ERROR + 'Sorry that file could not be found.' + Color.ENDC
@@ -166,7 +173,7 @@ def main():
         tech = tech.strip()
 
     if args.file:
-        load_snippet_from_file(args.file, name, tech) 
+        load_snippet_from_file(args.file, name, tech, unknown) 
         sys.exit(0)
 
     if args.silent:
@@ -177,6 +184,10 @@ def main():
 if __name__ == '__main__':
     try:
         main() 
+    except VariableError as e:
+        print Color.ERROR + 'You did not provide enough arguments for this template.',
+        print 'Expected {0} arguments.'.format(e) + Color.ENDC
+        print 'Example: snippet.py -n Lucas argument1 argument2'
     except KeyboardInterrupt as e:
         # I still cannot figure out why hitting Ctrl-C does not kill this
         # program immediately. It seems to be implementation specific and
