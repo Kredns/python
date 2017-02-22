@@ -4,12 +4,17 @@ import os
 import sys
 import operator
 import argparse
-from color import Color
-c = Color()
+try:
+    sys.path.append('../color/')
+    from color import Color
+except ImportError:
+    print 'Unable to find color module. Please ensure that color.py exists.'
+    sys.exit(2)
+
 try:
     import pyperclip
 except ImportError:
-    print c.colorize('You need to install pyperclip. sudo pip install pyperclip', Color.ERROR)
+    print Color.colorize('You need to install pyperclip. sudo pip install pyperclip', Color.ERROR)
     print 'If you do not have pip installed you will need to install that', \
     'using your systems package manager.'
     sys.exit(9)
@@ -50,11 +55,11 @@ class Snippet:
 
     def __replace_extra_args(self):
         if self.expected_args > len(self.extra_args):
-            print c.colorize('You did not provide enough arguments to use this template.',
+            print Color.colorize('You did not provide enough arguments to use this template.',
                             Color.WARNING)
             print 'This template expects {0} argument(s).'.format(self.expected_args)
             print '-' * self.cols
-            template = self.text.replace('$arg', c.colorize('$arg', Color.RED))
+            template = self.text.replace('$arg', Color.colorize('$arg', Color.RED))
             print template
 
             for i in range(0, self.expected_args):
@@ -71,7 +76,7 @@ class Snippet:
         return '-' * self.cols + '\n' + title + '-' * self.cols + '\n' + text
 
 def missing_config():
-    print c.colorize('You must have a config file located at ~/.config/snippets/tech that contains '
+    print Color.colorize('You must have a config file located at ~/.config/snippets/tech that contains '
     'your full name as the only line of text. This will be used as your signature when signing '
     'templates.', Color.ERROR)
     choice = raw_input('Would you like to create this file now (y\\N): ')
@@ -123,7 +128,7 @@ def choose_snippet(name, tech, silent, extra_args):
 
     snippets.sort(key=operator.attrgetter('tag'))
     if len(snippets) == 0:
-        print c.colorize('You do not have any snippets in ~/.config/snippets/', Color.ERROR)
+        print Color.colorize('You do not have any snippets in ~/.config/snippets/', Color.ERROR)
         sys.exit(3)
 
     for i, snippet in enumerate(snippets):
@@ -134,10 +139,10 @@ def choose_snippet(name, tech, silent, extra_args):
     try:
         choice = int(choice)
         if choice < 1:
-            print c.colorize('You must enter a positive number.', Color.ERROR)
+            print Color.colorize('You must enter a positive number.', Color.ERROR)
             sys.exit(4)
     except ValueError:
-        print c.colorize('You must enter a number.', Color.ERROR)
+        print Color.colorize('You must enter a number.', Color.ERROR)
         sys.exit(5)
 
     if not silent:
@@ -150,7 +155,7 @@ def load_snippet_from_file(snippet, name, tech, extra_args):
             snippet = Snippet(s.readline(), s.readline(), s.read(), name, tech, extra_args)
             pyperclip.copy(snippet.get_snippet_text())
     except IOError:
-        print c.colorize('Sorry that file could not be found.', Color.ERROR)
+        print Color.colorize('Sorry that file could not be found.', Color.ERROR)
 
 def main():
     parser = argparse.ArgumentParser(description='Copies snippets into your clipboard and addresses user personally. Signs snippets with your signature.')
@@ -164,7 +169,7 @@ def main():
 
     # --file requires -n because this is meant to be used for aliases.
     if args.file and not args.name:
-        print c.colorize('If you use --file or -f you must provide -n as well.', Color.ERROR)
+        print Color.colorize('If you use --file or -f you must provide -n as well.', Color.ERROR)
         sys.exit(6)
 
     name = '$user'
@@ -191,7 +196,7 @@ if __name__ == '__main__':
     try:
         main() 
     except pyperclip.exceptions.PyperclipException as e:
-        print c.colorize("You are probably using cygwin...and that's ok, but the clipboard"
+        print Color.colorize("You are probably using cygwin...and that's ok, but the clipboard"
                          "functionality isn't going to work.", Color.ERROR)
     except KeyboardInterrupt as e:
         # I still cannot figure out why hitting Ctrl-C does not kill this
