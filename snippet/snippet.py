@@ -188,8 +188,8 @@ if __name__ == '__main__':
     try:
         main() 
     except pyperclip.exceptions.PyperclipException as e:
-        print c.colorize('You are probably using cygwin...and that\'s ok, but the clipboard'
-                         'functionality isn\'t going to work.', Color.ERROR)
+        print c.colorize("You are probably using cygwin...and that's ok, but the clipboard"
+                         "functionality isn't going to work.", Color.ERROR)
     except KeyboardInterrupt as e:
         # I still cannot figure out why hitting Ctrl-C does not kill this
         # program immediately. It seems to be implementation specific and
