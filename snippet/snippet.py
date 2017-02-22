@@ -5,11 +5,11 @@ import sys
 import operator
 import argparse
 from color import Color
+c = Color()
 try:
     import pyperclip
 except ImportError:
-    print Color.ERROR + 'You need to install pyperclip. sudo pip install', \
-    'pyperclip' + Color.ENDC
+    print c.colorize('You need to install pyperclip. sudo pip install pyperclip', Color.ERROR)
     print 'If you do not have pip installed you will need to install that', \
     'using your systems package manager.'
     sys.exit(9)
@@ -18,9 +18,6 @@ home = os.path.expanduser('~')
 config_path = home + '/.config/snippets/'
 config_filename = 'tech'
 snippet_path = home + '/.config/snippets/'
-
-class VariableError(Exception):
-    pass
 
 class Snippet:
     def __init__(self, title, tag, text, user='$user', tech='$tech', extra_args=[]):
@@ -31,6 +28,9 @@ class Snippet:
         self.tech = tech
         self.extra_args = extra_args
         self.expected_args = self.text.count('$arg')
+        self.rows, self.cols = os.popen('stty size', 'r').read().split()
+        self.rows = int(self.rows)
+        self.cols = int(self.cols)
 
     def get_snippet(self):
         self.text = self.text.replace('$user', str(self.user))
@@ -49,9 +49,15 @@ class Snippet:
         return self.text
 
     def __replace_extra_args(self):
-        if self.expected_args != len(self.extra_args):
-            raise VariableError(self.expected_args)
-
+        if self.expected_args > len(self.extra_args):
+            print c.colorize('You did not provide enough arguments to use this template.',
+                            Color.WARNING)
+            print 'This template expects {0} argument(s).'.format(self.expected_args)
+            print '-' * self.cols
+            self.text = self.text.replace('$arg', c.colorize('$arg', Color.RED))
+            print self.text
+            sys.exit(2)
+            
         if self.extra_args:
             for i, arg in enumerate(self.extra_args):
                 arg_to_replace = '$arg{0}'.format(i + 1)
@@ -59,14 +65,12 @@ class Snippet:
 
     def __str__(self):
         title, text = self.get_snippet()
-        rows, cols = os.popen('stty size', 'r').read().split()
-        return '-' * int(cols) + '\n' + title + '-' * int(cols) + '\n' + text
+        return '-' * self.cols + '\n' + title + '-' * self.cols + '\n' + text
 
 def missing_config():
-    print Color.ERROR + 'You must have a config file located at', \
-    '~/.config/snippets/tech that contains your full name as the only', \
-    'line of text. This will be used as your signature when signing', \
-    'templates.' + Color.ENDC
+    print c.colorize('You must have a config file located at ~/.config/snippets/tech that contains '
+    'your full name as the only line of text. This will be used as your signature when signing '
+    'templates.', Color.ERROR)
     choice = raw_input('Would you like to create this file now (y\\N): ')
     if choice != 'y':
         sys.exit(1)
@@ -116,8 +120,7 @@ def choose_snippet(name, tech, silent, extra_args):
 
     snippets.sort(key=operator.attrgetter('tag'))
     if len(snippets) == 0:
-        print Color.ERROR + 'You do not have any snippets in', \
-        ' ~/.config/snippets/' + Color.ENDC
+        print c.colorize('You do not have any snippets in ~/.config/snippets/', Color.ERROR)
         sys.exit(3)
 
     for i, snippet in enumerate(snippets):
@@ -128,10 +131,10 @@ def choose_snippet(name, tech, silent, extra_args):
     try:
         choice = int(choice)
         if choice < 1:
-            print Color.ERROR + 'You must enter a positive number.' + Color.ENDC
+            print c.colorize('You must enter a positive number.', Color.ERROR)
             sys.exit(4)
     except ValueError:
-        print Color.ERROR + 'You must enter a number.' + Color.ENDC
+        print c.colorize('You must enter a number.', Color.ERROR)
         sys.exit(5)
 
     if not silent:
@@ -144,7 +147,7 @@ def load_snippet_from_file(snippet, name, tech, extra_args):
             snippet = Snippet(s.readline(), s.readline(), s.read(), name, tech, extra_args)
             pyperclip.copy(snippet.get_snippet_text())
     except IOError:
-        print Color.ERROR + 'Sorry that file could not be found.' + Color.ENDC
+        print c.colorize('Sorry that file could not be found.', Color.ERROR)
 
 def main():
     parser = argparse.ArgumentParser(description='Copies snippets into your clipboard and addresses user personally. Signs snippets with your signature.')
@@ -158,7 +161,7 @@ def main():
 
     # --file requires -n because this is meant to be used for aliases.
     if args.file and not args.name:
-        print Color.ERROR + 'If you use --file or -f you must provide -n as well.' + Color.ENDC
+        print c.colorize('If you use --file or -f you must provide -n as well.', Color.ERROR)
         sys.exit(6)
 
     name = '$user'
@@ -184,10 +187,6 @@ def main():
 if __name__ == '__main__':
     try:
         main() 
-    except VariableError as e:
-        print Color.ERROR + 'You did not provide enough arguments for this template.',
-        print 'Expected {0} arguments.'.format(e) + Color.ENDC
-        print 'Example: snippet.py -n Lucas argument1 argument2'
     except KeyboardInterrupt as e:
         # I still cannot figure out why hitting Ctrl-C does not kill this
         # program immediately. It seems to be implementation specific and
