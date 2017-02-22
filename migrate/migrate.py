@@ -7,13 +7,12 @@ import shutil
 import argparse
 import logging
 
-class Color:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    ERROR = '\033[91m'
-    ENDC = '\033[0m'
+try:
+    sys.path.append('../color/')
+    from color import Color
+except ImportError:
+    print 'Unable to find color module. Please ensure that color.py exists.'
+    sys.exit(2)
 
 class WindowsMigrate:
     def __init__(self, log=False):

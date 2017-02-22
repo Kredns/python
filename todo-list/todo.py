@@ -4,7 +4,12 @@
 import os
 from datetime import date
 from collections import defaultdict
-from color import Color
+try:
+    sys.path.append('../color/')
+    from color import Color
+except ImportError:
+    print 'Unable to find color module. Please ensure that color.py exists.'
+    sys.exit(1)
 
 home = os.path.expanduser('~')
 
