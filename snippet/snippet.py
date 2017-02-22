@@ -54,9 +54,12 @@ class Snippet:
                             Color.WARNING)
             print 'This template expects {0} argument(s).'.format(self.expected_args)
             print '-' * self.cols
-            self.text = self.text.replace('$arg', c.colorize('$arg', Color.RED))
-            print self.text
-            sys.exit(2)
+            template = self.text.replace('$arg', c.colorize('$arg', Color.RED))
+            print template
+
+            for i in range(0, self.expected_args):
+                arg = raw_input('Text to be replaced for $arg{0}-> '.format(i + 1))
+                self.extra_args.append(arg)
             
         if self.extra_args:
             for i, arg in enumerate(self.extra_args):
