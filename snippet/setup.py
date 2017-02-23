@@ -7,5 +7,5 @@ setup(name='snippet',
       description='Snippet copies text snippets into your clipboard and replaces predefined variables',
       author='Lucas McCoy',
       author_email='lmccoy@redhat.com',
-      packages['snippet'],
+      packages=['snippet'],
      )
