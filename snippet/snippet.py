@@ -26,7 +26,7 @@ snippet_path = home + '/.config/snippets/'
 
 class Snippet:
     def __init__(self, title, tag, text, user='$user', tech='$tech', extra_args=[]):
-        self.user = user
+        self.user = user.strip()
         self.title = title
         self.tag = tag
         self.text = text
