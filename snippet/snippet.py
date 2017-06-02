@@ -31,6 +31,7 @@ class Snippet:
         self.tag = tag
         self.text = text
         self.tech = tech
+        # TODO: Fix this so that one argument can be used multiple times in a template.
         self.extra_args = extra_args
         self.expected_args = self.text.count('$arg')
         self.rows, self.cols = os.popen('stty size', 'r').read().split()
