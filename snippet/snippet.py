@@ -8,8 +8,11 @@ try:
     sys.path.append('../color/')
     from color import Color
 except ImportError:
-    print 'Unable to find color module. Please ensure that color.py exists.'
-    sys.exit(2)
+    class Color(object):
+        pass
+
+    def colorize(self, string):
+        return string
 
 try:
     import pyperclip
