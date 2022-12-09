@@ -20,5 +20,5 @@ if __name__ == '__main__':
 					output += word + ' '
 		f.seek(0) # Return to the beginning of the file.
 		print(f.read())
-	
+
 	print(output)
