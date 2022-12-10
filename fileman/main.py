@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os, sys
 import curses
 
@@ -14,7 +14,7 @@ class fileman(object):
         row = 1
         col = 1
         for filename in os.listdir(path):
-            if row is 1 and col is 1:
+            if row == 1 and col == 1:
                 self.screen.addstr(row, col, filename, curses.color_pair(1))
             else:
                 self.screen.addstr(row, col, filename)
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         window = fileman(screen)
         window.show_files(path)
     except Exception as e:
-        print e
+        print(e)
         curses.endwin()
     finally:
         curses.endwin()
